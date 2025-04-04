@@ -17,8 +17,17 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'API key or service domain is not configured' }, { status: 500 });
   }
 
-  // サービスドメインを直接使用
-  let url = `https://${serviceDomain}.microcms.io/api/v1/${endpoint}`;
+  // サービスドメインの形式をチェック
+  let url;
+  if (serviceDomain.includes('.microcms.io')) {
+    // すでに完全なドメイン名の場合
+    url = `https://${serviceDomain}/api/v1/${endpoint}`;
+    console.log('Using full domain:', serviceDomain);
+  } else {
+    // サービスIDのみの場合
+    url = `https://${serviceDomain}.microcms.io/api/v1/${endpoint}`;
+    console.log('Using service ID with .microcms.io:', serviceDomain);
+  }
   
   if (contentId) {
     url += `/${contentId}`;
@@ -48,10 +57,14 @@ export async function GET(request: NextRequest) {
     }
 
     console.log('Fetching from URL:', url);
+    console.log('With headers:', JSON.stringify(headers));
+    
     const response = await fetch(url, { headers });
     
     if (!response.ok) {
-      throw new Error(`API responded with status ${response.status}`);
+      const errorText = await response.text();
+      console.error(`API responded with status ${response.status}:`, errorText);
+      throw new Error(`API responded with status ${response.status}: ${errorText}`);
     }
 
     const data = await response.json();

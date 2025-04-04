@@ -1,5 +1,19 @@
 import { createClient } from 'microcms-js-sdk';
 
+// サーバーサイドかクライアントサイドかを判定
+const isServer = typeof window === 'undefined';
+
+// 環境変数のログ出力（デバッグ用）
+if (isServer) {
+  console.log('Server-side environment variables:');
+  console.log('MICROCMS_API_KEY exists:', !!process.env.MICROCMS_API_KEY);
+  console.log('MICROCMS_SERVICE_DOMAIN:', process.env.MICROCMS_SERVICE_DOMAIN);
+} else {
+  console.log('Client-side environment variables:');
+  console.log('NEXT_PUBLIC_MICROCMS_API_KEY exists:', !!process.env.NEXT_PUBLIC_MICROCMS_API_KEY);
+  console.log('NEXT_PUBLIC_MICROCMS_SERVICE_DOMAIN:', process.env.NEXT_PUBLIC_MICROCMS_SERVICE_DOMAIN);
+}
+
 // サーバーサイド用の環境変数
 const SERVER_API_KEY = process.env.MICROCMS_API_KEY;
 const SERVER_SERVICE_DOMAIN = process.env.MICROCMS_SERVICE_DOMAIN;
@@ -8,23 +22,30 @@ const SERVER_SERVICE_DOMAIN = process.env.MICROCMS_SERVICE_DOMAIN;
 const CLIENT_API_KEY = process.env.NEXT_PUBLIC_MICROCMS_API_KEY;
 const CLIENT_SERVICE_DOMAIN = process.env.NEXT_PUBLIC_MICROCMS_SERVICE_DOMAIN;
 
-// サーバーサイドかクライアントサイドかを判定
-const isServer = typeof window === 'undefined';
-
 // 適切な環境変数を選択
 const API_KEY = isServer ? SERVER_API_KEY : CLIENT_API_KEY;
 const SERVICE_DOMAIN = isServer ? SERVER_SERVICE_DOMAIN : CLIENT_SERVICE_DOMAIN;
 
 if (!API_KEY) {
+  console.error('API key is missing:', { isServer, SERVER_API_KEY: !!SERVER_API_KEY, CLIENT_API_KEY: !!CLIENT_API_KEY });
   throw new Error('MICROCMS_API_KEY is required');
 }
 
 if (!SERVICE_DOMAIN) {
+  console.error('Service domain is missing:', { isServer, SERVER_SERVICE_DOMAIN, CLIENT_SERVICE_DOMAIN });
   throw new Error('MICROCMS_SERVICE_DOMAIN is required');
 }
 
+// サービスドメインの形式をチェック
+let formattedServiceDomain = SERVICE_DOMAIN;
+if (SERVICE_DOMAIN && SERVICE_DOMAIN.includes('.microcms.io')) {
+  // すでに完全なドメイン名の場合は.microcms.ioを削除
+  formattedServiceDomain = SERVICE_DOMAIN.replace('.microcms.io', '');
+  console.log('Removed .microcms.io from service domain for SDK:', formattedServiceDomain);
+}
+
 export const client = createClient({
-  serviceDomain: SERVICE_DOMAIN,
+  serviceDomain: formattedServiceDomain,
   apiKey: API_KEY,
 });
 
