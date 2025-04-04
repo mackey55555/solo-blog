@@ -6,8 +6,10 @@
   "framework": "nextjs",
   "outputDirectory": ".next",
   "env": {
-    "MICROCMS_API_KEY": "@microcms-api-key",
-    "MICROCMS_SERVICE_DOMAIN": "@microcms-service-domain",
-    "NEXT_PUBLIC_GOOGLE_ADSENSE_ID": "@google-adsense-id"
+    "MICROCMS_API_KEY": "${MICROCMS_API_KEY}",
+    "MICROCMS_SERVICE_DOMAIN": "${MICROCMS_SERVICE_DOMAIN}",
+    "NEXT_PUBLIC_MICROCMS_API_KEY": "${NEXT_PUBLIC_MICROCMS_API_KEY}",
+    "NEXT_PUBLIC_MICROCMS_SERVICE_DOMAIN": "${NEXT_PUBLIC_MICROCMS_SERVICE_DOMAIN}",
+    "NEXT_PUBLIC_GOOGLE_ADSENSE_ID": "${NEXT_PUBLIC_GOOGLE_ADSENSE_ID}"
   }
 }
