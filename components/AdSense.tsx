@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react';
 // AdSenseの型定義を追加
 declare global {
   interface Window {
-    adsbygoogle: any[];
+    adsbygoogle: Array<object> | undefined;
   }
 }
 

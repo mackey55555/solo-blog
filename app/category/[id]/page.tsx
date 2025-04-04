@@ -9,7 +9,7 @@ import AdSense from "@/components/AdSense";
 export async function generateMetadata({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   try {
     // paramsをawaitする
@@ -44,16 +44,16 @@ export async function generateStaticParams() {
   try {
     const { contents } = await getCategories({ limit: 100 });
     
-    return contents.map((category: Category) => ({
+    return Promise.resolve(contents.map((category: Category) => ({
       id: category.id,
-    }));
+    })));
   } catch (error) {
     console.error('Error generating static params:', error);
-    return [];
+    return Promise.resolve([]);
   }
 }
 
-export default async function CategoryPage({ params }: { params: { id: string } }) {
+export default async function CategoryPage({ params }: { params: Promise<{ id: string }> }) {
   try {
     // paramsをawaitする
     const resolvedParams = await params;
