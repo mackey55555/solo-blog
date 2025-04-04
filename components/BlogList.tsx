@@ -63,6 +63,13 @@ export default function BlogList() {
         <div className="bg-red-50 border border-red-200 rounded-md p-4 max-w-md mx-auto text-left">
           <p className="text-red-700 text-sm font-medium mb-2">エラー詳細:</p>
           <p className="text-red-600 text-xs break-words">{error.message}</p>
+          {/* エラーの追加情報があれば表示 */}
+          <div className="mt-2">
+            <p className="text-red-700 text-sm font-medium mb-1">追加情報:</p>
+            <pre className="text-red-600 text-xs overflow-auto max-h-32 bg-red-50 p-2 rounded border border-red-200">
+              {error.message}
+            </pre>
+          </div>
         </div>
       </div>
     );

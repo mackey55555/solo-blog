@@ -64,6 +64,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(data);
   } catch (error) {
     console.error('Error fetching from microCMS:', error);
-    return NextResponse.json({ error: 'Failed to fetch data from microCMS' }, { status: 500 });
+    // より詳細なエラー情報を返す
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json({ 
+      error: 'Failed to fetch data from microCMS',
+      details: errorMessage,
+      serviceDomain,
+      apiKeyExists: !!apiKey,
+      url
+    }, { status: 500 });
   }
 }
