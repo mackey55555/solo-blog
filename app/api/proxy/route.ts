@@ -17,17 +17,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'API key or service domain is not configured' }, { status: 500 });
   }
 
-  // サービスドメインの形式をチェック
-  let url;
-  if (serviceDomain.includes('.microcms.io')) {
-    // すでに完全なドメイン名の場合
-    url = `https://${serviceDomain}/api/v1/${endpoint}`;
-    console.log('Using full domain:', serviceDomain);
-  } else {
-    // サービスIDのみの場合
-    url = `https://${serviceDomain}.microcms.io/api/v1/${endpoint}`;
-    console.log('Using service ID with .microcms.io:', serviceDomain);
-  }
+  // microCMSの管理画面に表示されているベースURLを使用
+  const baseUrl = `https://${serviceDomain}.microcms.io/api/v1`;
+  let url = `${baseUrl}/${endpoint}`;
+  console.log('Using microCMS base URL:', baseUrl);
   
   if (contentId) {
     url += `/${contentId}`;
