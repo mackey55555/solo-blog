@@ -3,26 +3,36 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { getBlogs } from '@/lib/microcms';
+import { getBlogs, getCategories } from '@/lib/microcms';
 import AdSense from './AdSense';
-import type { Blog } from '@/lib/microcms';
+import type { Blog, Category } from '@/lib/microcms';
 
 export default function BlogList() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    const fetchBlogs = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true);
-        console.log('Fetching blogs...');
-        const { contents } = await getBlogs({ limit: 10 });
-        console.log('Blogs fetched successfully:', contents.length);
-        setBlogs(contents);
+        console.log('Fetching blogs and categories...');
+        
+        // ブログとカテゴリーを並行して取得
+        const [blogsResponse, categoriesResponse] = await Promise.all([
+          getBlogs({ limit: 10 }),
+          getCategories({ limit: 100 })
+        ]);
+        
+        console.log('Blogs fetched successfully:', blogsResponse.contents.length);
+        console.log('Categories fetched successfully:', categoriesResponse.contents.length);
+        
+        setBlogs(blogsResponse.contents);
+        setCategories(categoriesResponse.contents);
         setError(null);
       } catch (err) {
-        console.error('Error fetching blogs:', err);
+        console.error('Error fetching data:', err);
         // エラーメッセージをより詳細に
         const errorMessage = err instanceof Error 
           ? `${err.name}: ${err.message}` 
@@ -34,7 +44,7 @@ export default function BlogList() {
       }
     };
 
-    fetchBlogs();
+    fetchData();
   }, []);
 
   if (loading) {
@@ -175,7 +185,25 @@ export default function BlogList() {
           
           <div className="bg-gray-50 p-5 rounded-lg border border-gray-200">
             <h3 className="text-lg font-medium mb-3 pb-2 border-b border-gray-200">カテゴリー</h3>
-            <p className="text-gray-500 text-sm">カテゴリーはまだ設定されていません。</p>
+            {categories.length === 0 ? (
+              <p className="text-gray-500 text-sm">カテゴリーはまだ設定されていません。</p>
+            ) : (
+              <ul className="space-y-2">
+                {categories.map((category) => (
+                  <li key={category.id}>
+                    <Link 
+                      href={`/category/${category.id}`}
+                      className="text-blue-600 hover:text-blue-800 text-sm flex items-center"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                      </svg>
+                      {category.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
           
           {/* サイドバー広告 */}

@@ -48,7 +48,7 @@ export default function RootLayout({
                     </Link>
                   </li>
                   <li>
-                    <Link href="https://github.com/mackey" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-900 transition-colors">
+                    <Link href="https://github.com/mackey55555" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-900 transition-colors">
                       GitHub
                     </Link>
                   </li>
