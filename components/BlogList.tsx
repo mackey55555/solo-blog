@@ -97,10 +97,10 @@ export default function BlogList() {
           </p>
         </div>
         
-        <h2 className="text-2xl font-bold mb-6 border-b pb-2">最近の記事</h2>
+        <h2 className="text-2xl font-bold mb-2 border-b pb-2">最近の記事</h2>
         
         {/* 広告を表示 */}
-        <div className="mb-8">
+        <div className="mb-2">
           <AdSense slot="1234567890" />
         </div>
         
@@ -112,7 +112,7 @@ export default function BlogList() {
         )}
         
         {/* ブログ記事一覧 */}
-        <div className="space-y-8">
+        <div className="space-y-2 mt-1">
           {blogs.map((blog, index) => (
             <article key={blog.id} className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
               <div className="md:flex">

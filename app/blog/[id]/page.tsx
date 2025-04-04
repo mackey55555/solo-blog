@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getBlogDetail, getBlogs, type Blog } from "@/lib/microcms";
 import AdSense from "@/components/AdSense";
+import CodeBlock from "@/components/CodeBlock";
 
 // 動的メタデータの生成
 export async function generateMetadata({
@@ -127,18 +128,15 @@ export default async function BlogDetail({ params }: { params: Promise<{ id: str
               </div>
               
               {/* 記事上部の広告 */}
-              <div className="my-6">
+              <div className="my-2">
                 <AdSense slot="1234567890" />
               </div>
               
               {/* 記事本文 */}
-              <div 
-                className="prose prose-lg max-w-none prose-headings:font-bold prose-headings:text-gray-800 prose-a:text-blue-600 prose-img:rounded-lg"
-                dangerouslySetInnerHTML={{ __html: blog.content }}
-              />
+              <CodeBlock content={blog.content} />
               
               {/* 記事下部の広告 */}
-              <div className="mt-8">
+              <div className="mt-4">
                 <AdSense slot="0987654321" />
               </div>
             </div>
