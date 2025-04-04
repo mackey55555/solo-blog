@@ -17,9 +17,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'API key or service domain is not configured' }, { status: 500 });
   }
 
-  // サービスドメインからホスト名部分のみを抽出
-  const domainName = serviceDomain.replace(/\.microcms\.io$/, '');
-  let url = `https://${domainName}.microcms.io/api/v1/${endpoint}`;
+  // サービスドメインを直接使用
+  let url = `https://${serviceDomain}.microcms.io/api/v1/${endpoint}`;
   
   if (contentId) {
     url += `/${contentId}`;
@@ -30,13 +29,22 @@ export async function GET(request: NextRequest) {
       'X-MICROCMS-API-KEY': apiKey,
     };
 
-    const queryParams = queries ? JSON.parse(queries) : {};
-    const queryString = Object.entries(queryParams)
-      .map(([key, value]) => `${key}=${encodeURIComponent(String(value))}`)
-      .join('&');
-
-    if (queryString) {
-      url += `?${queryString}`;
+    let queryString = '';
+    
+    try {
+      if (queries) {
+        const queryParams = JSON.parse(queries);
+        queryString = Object.entries(queryParams)
+          .map(([key, value]) => `${key}=${encodeURIComponent(String(value))}`)
+          .join('&');
+      }
+      
+      if (queryString) {
+        url += `?${queryString}`;
+      }
+    } catch (error) {
+      console.error('Error parsing queries:', error, queries);
+      return NextResponse.json({ error: 'Invalid query parameters' }, { status: 400 });
     }
 
     console.log('Fetching from URL:', url);

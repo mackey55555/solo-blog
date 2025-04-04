@@ -82,13 +82,21 @@ async function fetchFromProxy(endpoint: string, contentId?: string, queries?: ob
     }
     
     if (queries) {
-      url += `&queries=${encodeURIComponent(JSON.stringify(queries))}`;
+      try {
+        url += `&queries=${encodeURIComponent(JSON.stringify(queries))}`;
+      } catch (jsonError) {
+        console.error('Error stringifying queries:', jsonError, queries);
+        throw new Error('Invalid query parameters');
+      }
     }
     
+    console.log('Fetching from proxy URL:', url);
     const response = await fetch(url);
     
     if (!response.ok) {
-      throw new Error(`API responded with status ${response.status}`);
+      const errorText = await response.text();
+      console.error(`API responded with status ${response.status}:`, errorText);
+      throw new Error(`API responded with status ${response.status}: ${errorText}`);
     }
     
     return await response.json();

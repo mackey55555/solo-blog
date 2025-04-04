@@ -16,11 +16,18 @@ export default function BlogList() {
     const fetchBlogs = async () => {
       try {
         setLoading(true);
+        console.log('Fetching blogs...');
         const { contents } = await getBlogs({ limit: 10 });
+        console.log('Blogs fetched successfully:', contents.length);
         setBlogs(contents);
         setError(null);
       } catch (err) {
         console.error('Error fetching blogs:', err);
+        // エラーメッセージをより詳細に
+        const errorMessage = err instanceof Error 
+          ? `${err.name}: ${err.message}` 
+          : 'Unknown error occurred';
+        console.error('Detailed error:', errorMessage);
         setError(err instanceof Error ? err : new Error('Unknown error'));
       } finally {
         setLoading(false);
@@ -50,9 +57,13 @@ export default function BlogList() {
           <li>categories: カテゴリー用API</li>
           <li>tags: タグ用API</li>
         </ul>
-        <p className="text-gray-600">
+        <p className="text-gray-600 mb-4">
           詳細はREADME.mdファイルを参照してください。
         </p>
+        <div className="bg-red-50 border border-red-200 rounded-md p-4 max-w-md mx-auto text-left">
+          <p className="text-red-700 text-sm font-medium mb-2">エラー詳細:</p>
+          <p className="text-red-600 text-xs break-words">{error.message}</p>
+        </div>
       </div>
     );
   }

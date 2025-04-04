@@ -218,6 +218,12 @@ export default async function CategoryPage({ params }: { params: Promise<{ id: s
     );
   } catch (error) {
     console.error('Error rendering category page:', error);
+    // エラーメッセージをより詳細に
+    const errorMessage = error instanceof Error 
+      ? `${error.name}: ${error.message}` 
+      : 'Unknown error occurred';
+    console.error('Detailed error:', errorMessage);
+    
     return (
       <div className="text-center py-10">
         <h2 className="text-2xl font-bold mb-4">データの取得中にエラーが発生しました</h2>
@@ -229,9 +235,13 @@ export default async function CategoryPage({ params }: { params: Promise<{ id: s
           <li>categories: カテゴリー用API</li>
           <li>tags: タグ用API</li>
         </ul>
-        <p className="text-gray-600">
+        <p className="text-gray-600 mb-4">
           詳細はREADME.mdファイルを参照してください。
         </p>
+        <div className="bg-red-50 border border-red-200 rounded-md p-4 max-w-md mx-auto text-left mb-6">
+          <p className="text-red-700 text-sm font-medium mb-2">エラー詳細:</p>
+          <p className="text-red-600 text-xs break-words">{errorMessage}</p>
+        </div>
         <div className="mt-6">
           <Link
             href="/"
